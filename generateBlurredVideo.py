@@ -33,8 +33,8 @@ model_name = "VGG-Face"
 target_size = functions.find_target_size(model_name = model_name)
 model = DeepFace.build_model(model_name = model_name)
 
-video_file = "ppl_running.mp4"
-filename = "new.avi"
+video_file = "ppl_running.mp4"   # the video file which has to be blurred
+filename = "new.avi"     # the file name to be created once blurred
 uniqueFaces = []
 
 # starting cap and video writer
