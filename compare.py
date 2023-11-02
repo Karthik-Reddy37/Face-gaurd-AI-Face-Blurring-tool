@@ -2,16 +2,21 @@ import numpy as np
 from deepface import DeepFace
 from deepface.commons import functions
 from results import extractResults,extractFaces,getFaces
+from scipy.spatial import distance
+import cv2
 
 def euclidDist(img1_representation,img2_representation):
   distance_vector = np.square(np.array(img1_representation) - np.array(img2_representation)) #getting distance from representation
   distance = np.sqrt(distance_vector.sum())
   return distance
 
+def cosDist(img1_representation,img2_representation):
+  return distance.cosine(img1_representation,img2_representation)
+
 def compareFaces(image1,image2,model):
   img1_representation = model.predict(image1).tolist()
   img2_representation = model.predict(image2).tolist()
-  if euclidDist(img1_representation,img2_representation) <=0.47:
+  if cosDist(img1_representation,img2_representation) <=0.31:
     return True
   return False
 
@@ -33,7 +38,8 @@ def getUnique(uniqueFaces,image,model,target_size):
     for frameFace in faces:
         frameFace = np.expand_dims(frameFace, axis=0)
         if len(uniqueFaces) == 0:
-            uniqueFaces.append(frameFace[0])
+            face = cv2.cvtColor(frameFace[0],cv2.COLOR_BGR2RGB)
+            uniqueFaces.append(face)
             facedata.append([0,results[i]]) #facedata[0].append(results[i]) #
             
         else: 
@@ -49,7 +55,8 @@ def getUnique(uniqueFaces,image,model,target_size):
                 j=j+1 
                 
             if check:
-                uniqueFaces.append(frameFace[0])
+                face = cv2.cvtColor(frameFace[0],cv2.COLOR_BGR2RGB)
+                uniqueFaces.append(face)
                 facedata.append([j,results[i]]) #facedata[j].append(results[i]) 
         
         i= i+1

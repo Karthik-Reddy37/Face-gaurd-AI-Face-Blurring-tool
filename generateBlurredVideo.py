@@ -49,7 +49,7 @@ fps = cap.get(cv2.CAP_PROP_FPS)
 video_writer = cv2.VideoWriter(os.path.join(filename),cv2.VideoWriter_fourcc('P','I','M','1'),fps,(width,height))
 
 detected = []
-framegap = 10
+framegap = 5  #change the frame gap according to your needs
 i = 0
 
 while cap.isOpened():
@@ -60,14 +60,13 @@ while cap.isOpened():
       break
     
     if i%framegap == 0:
-      newData = getUnique(uniqueFaces,frame,model,target_size)
-      detected.append(newData)
-      # try:
-      #   newData = getUnique(uniqueFaces,frame,model,target_size)
-      #   detected.append(newData)
-      # except:
-      #   detected.append([[-1]])
-      #   print("face not detected")
+      try:
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        newData = getUnique(uniqueFaces,frame,model,target_size)
+        detected.append(newData)
+      except:
+        detected.append([[-1]])
+        print("face not detected")
 
     #frames.append(frame)
     i+=1
@@ -110,8 +109,7 @@ def writeVideo(frame,detected,blurFaces,index):
   else:
     img = frame
   
-  
-  video_writer.write(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+  video_writer.write(img)
 
 framecount = 1
 index = 0
@@ -130,7 +128,8 @@ while cap.isOpened():
     if not ret:
       print("Can't receive frame (stream end?). Exiting ...")
       break
-
+    
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     writeVideo(frame,detected,blurFaces,index)
     
     if framecount%framegap == 0:
