@@ -12,7 +12,7 @@ def crop(result,image):
 def blur_section(cropped):
   blurred = []
   for section in cropped:
-    blurred.append(cv2.blur(section,(20,20)))
+    blurred.append(cv2.blur(section,(50,50)))
   return blurred
 
 def back(result,image,blurred):
@@ -22,7 +22,7 @@ def back(result,image,blurred):
   y1 = result[1]
   x2 = result[0]+result[2]
   y2 = result[1]+result[3]
-  image[y1:y2,x1:x2,:] = blurred
+  image[y1:y2,x1:x2,:] = blurred[0]
   return image
 
 def generateBlurred(image,results,blurFaces):

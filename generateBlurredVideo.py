@@ -29,7 +29,7 @@ from blurrTools import generateBlurred
 
 
 ## defining the model name to build the model
-model_name = "VGG-Face"
+model_name = "VGG-Face" #"Facenet" 
 target_size = functions.find_target_size(model_name = model_name)
 model = DeepFace.build_model(model_name = model_name)
 
@@ -49,7 +49,7 @@ fps = cap.get(cv2.CAP_PROP_FPS)
 video_writer = cv2.VideoWriter(os.path.join(filename),cv2.VideoWriter_fourcc('P','I','M','1'),fps,(width,height))
 
 detected = []
-framegap = 5
+framegap = 10
 i = 0
 
 while cap.isOpened():
@@ -60,12 +60,14 @@ while cap.isOpened():
       break
     
     if i%framegap == 0:
-      try:
-        newData = getUnique(uniqueFaces,frame,model,target_size)
-        detected.append(newData)
-      except:
-        detected.append([[-1]])
-        print("face not detected")
+      newData = getUnique(uniqueFaces,frame,model,target_size)
+      detected.append(newData)
+      # try:
+      #   newData = getUnique(uniqueFaces,frame,model,target_size)
+      #   detected.append(newData)
+      # except:
+      #   detected.append([[-1]])
+      #   print("face not detected")
 
     #frames.append(frame)
     i+=1
@@ -87,6 +89,8 @@ for i in range(int(len(uniqueFaces))):
   plt.imshow(img)
   plt.axis('off')
   plt.title("face no. " + str(i))
+
+plt.savefig("results.jpg")
 
 blurFaces = set()
 
