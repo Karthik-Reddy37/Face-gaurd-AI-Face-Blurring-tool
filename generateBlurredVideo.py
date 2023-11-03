@@ -29,12 +29,12 @@ from blurrTools import generateBlurred
 
 
 ## defining the model name to build the model
-model_name = "VGG-Face" #"Facenet" 
+model_name = "VGG-Face" # "Facenet" 
 target_size = functions.find_target_size(model_name = model_name)
 model = DeepFace.build_model(model_name = model_name)
 
-video_file = "ppl_running.mp4"   # the video file which has to be blurred
-filename = "new.avi"     # the file name to be created once blurred
+video_file = "ppl_running.mp4" #" D:\\projects\\faceblur\\news.mp4"  # the video file which has to be blurred
+filename = "new.mp4" # "D:\\projects\\faceblur\\blurred.mp4"    # the file name to be created once blurred
 uniqueFaces = []
 
 # starting cap and video writer
@@ -45,8 +45,10 @@ width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 fcount = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 fps = cap.get(cv2.CAP_PROP_FPS)
 
+mp4fourcc = cv2.VideoWriter_fourcc(*'XVID') #MP4V
+avifourcc = cv2.VideoWriter_fourcc('P','I','M','1')
 
-video_writer = cv2.VideoWriter(os.path.join(filename),cv2.VideoWriter_fourcc('P','I','M','1'),fps,(width,height))
+video_writer = cv2.VideoWriter(os.path.join(filename),cv2.VideoWriter_fourcc('m','p','4','v'),fps,(width,height))
 
 detected = []
 framegap = 5  #change the frame gap according to your needs
@@ -100,16 +102,6 @@ while True:
     break
   else:
     blurFaces.add(int(inp))
-  
-
-
-def writeVideo(frame,detected,blurFaces,index):
-  if index<len(detected) and detected[index][0][0] != -1:
-    img = generateBlurred(frame,detected[index],blurFaces)
-  else:
-    img = frame
-  
-  video_writer.write(img)
 
 framecount = 1
 index = 0
@@ -120,23 +112,33 @@ width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 fcount = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 fps = cap.get(cv2.CAP_PROP_FPS)
 
-video_writer = cv2.VideoWriter(os.path.join(filename),cv2.VideoWriter_fourcc('P','I','M','1'),fps,(width,height))
+video_writer = cv2.VideoWriter(os.path.join(filename),cv2.VideoWriter_fourcc('m','p','4','v'),fps,(width,height))
+
+
+def writeVideo(frame,detected,blurFaces,index):
+  if index<len(detected) and detected[index][0][0] != -1:
+    img = generateBlurred(frame,detected[index],blurFaces)
+  else:
+    img = frame
+
+  #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+  video_writer.write(img)
 
 while cap.isOpened():
     ret, frame = cap.read()
-         # if frame is read correctly ret is True
+    # if frame is read correctly ret is True
+
     if not ret:
       print("Can't receive frame (stream end?). Exiting ...")
       break
     
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     writeVideo(frame,detected,blurFaces,index)
     
     if framecount%framegap == 0:
       index+=1
 
-    framecount+=1
     print(framecount)
+    framecount+=1
     
     if cv2.waitKey(10) & 0xFF == ord('q'):
       break

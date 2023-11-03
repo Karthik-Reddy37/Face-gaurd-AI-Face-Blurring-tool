@@ -26,7 +26,7 @@ def compareFaces(image1,image2,model):
 def getUnique(uniqueFaces,image,model,target_size):
     facedata = []
     # getting the results as faces from the detector
-    initial_results = DeepFace.extract_faces(image, target_size=target_size, detector_backend ="mtcnn")
+    initial_results = DeepFace.extract_faces(image, target_size=target_size,detector_backend ="retinaface")  #detector_backend ="mtcnn"
     initial_results = np.expand_dims(initial_results, axis=0)
     
     #extracting the different results
